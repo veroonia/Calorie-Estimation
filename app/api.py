@@ -1,26 +1,22 @@
-from fastapi import FastAPI
+# app/api.py
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from app.model import predict
+from app.model import predict_from_image
 
 app = FastAPI(title="Calorie Estimation API")
 
-class PredictionRequest(BaseModel):
-    features: list[float]
+class ImageRequest(BaseModel):
+    image_path: str
 
 @app.get("/")
-def health_check():
+def health():
     return {"status": "ok"}
 
 @app.post("/predict")
-def predict_endpoint(req: PredictionRequest):
-    result = predict(req.features)
-    return {"prediction": int(result)}
-
-
-#Creates the web application
-#Holds all routes (@app.get, @app.post, etc.)
-#Is what uvicorn runs
-#No app → no API → underline.
-
-#import path: app.api:app, uvicorn app.api:app --reload
-
+def predict(req: ImageRequest):
+    try:
+        prediction = predict_from_image(req.image_path)
+        return {"prediction": prediction}
+    except ValueError as e:
+        # Return as 400 Bad Request for errors like missing image or feature mismatch
+        raise HTTPException(status_code=400, detail=str(e))
