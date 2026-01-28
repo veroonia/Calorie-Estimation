@@ -1,15 +1,20 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
+from app.model import predict
 
 app = FastAPI(title="Calorie Estimation API")
+
+class PredictionRequest(BaseModel):
+    features: list[float]
 
 @app.get("/")
 def health_check():
     return {"status": "ok"}
 
-@app.get("/predict")
-def predict():
-    return {"calories": 123}
-
+@app.post("/predict")
+def predict_endpoint(req: PredictionRequest):
+    result = predict(req.features)
+    return {"prediction": int(result)}
 
 
 #Creates the web application
