@@ -1,22 +1,37 @@
-# app/api.py
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, UploadFile, File
+import shutil
+import os
 from app.model import predict_from_image
 
 app = FastAPI(title="Calorie Estimation API")
 
-class ImageRequest(BaseModel):
-    image_path: str
+UPLOAD_DIR = "temp"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @app.get("/")
 def health():
     return {"status": "ok"}
 
-@app.post("/predict")
-def predict(req: ImageRequest):
+@app.post("/predict-image")
+def predict_image(file: UploadFile = File(...)):
+    print("API: request received")
+
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Invalid file type")
+
+    temp_path = os.path.join(UPLOAD_DIR, file.filename)
+
     try:
-        prediction = predict_from_image(req.image_path)
+        print("API: saving file")
+        with open(temp_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        print("API: file saved, calling model")
+        prediction = predict_from_image(temp_path)
+        print("API: model returned")
+
         return {"prediction": prediction}
-    except ValueError as e:
-        # Return as 400 Bad Request for errors like missing image or feature mismatch
-        raise HTTPException(status_code=400, detail=str(e))
+
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
