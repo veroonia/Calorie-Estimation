@@ -4,6 +4,26 @@ import numpy as np
 from joblib import load
 from skimage.feature import local_binary_pattern
 import os
+import pandas as pd
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CALORIES_PATH = os.path.join(BASE_DIR, "Calories.csv")
+
+calories_df = pd.read_csv(CALORIES_PATH)
+
+label_map = {
+    0: "Bread",
+    1: "Dairy product",
+    2: "Dessert",
+    3: "Egg",
+    4: "Fried food",
+    5: "Meat",
+    6: "Noodles-Pasta",
+    7: "Rice",
+    8: "Seafood",
+    9: "Soup",
+    10: "Vegetable-Fruit"
+}
 
 # Load your existing RandomForest model
 MODEL_PATH = os.path.join("models", "rf_model.joblib")
@@ -55,18 +75,28 @@ def extract_features(img):
     return features.reshape(1, -1)
 
 def predict_from_image(image_path: str):
-    """
-    Returns the predicted class from an image path.
-    """
     img = cv2.imread(image_path)
     if img is None:
-        raise ValueError(f"Image not found at path: {image_path}")
+        raise ValueError("Image not found")
 
     features = extract_features(img)
 
-    # Check feature size
     if features.shape[1] != rf_model.n_features_in_:
-        raise ValueError(f"X has {features.shape[1]} features, but RandomForestClassifier is expecting {rf_model.n_features_in_} features as input.")
+        raise ValueError(
+            f"Expected {rf_model.n_features_in_} features, got {features.shape[1]}"
+        )
 
-    pred = rf_model.predict(features)
-    return int(pred[0])
+    # Predict class
+    pred_label = int(rf_model.predict(features)[0])
+    food_category = label_map[pred_label]
+
+    # Lookup calories per 100g
+    calories_per_100g = calories_df.loc[
+        calories_df["food_category"] == food_category,
+        "calories_per_100g"
+    ].values[0]
+
+    return {
+        "food_category": food_category,
+        "calories_per_100g": int(calories_per_100g)
+    }
