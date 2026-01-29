@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Calorie Estimator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .dropzone {
+            border: 2px dashed #94a3b8;
+            transition: all 0.2s ease;
+        }
+
+        .dropzone.dragover {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center">
+
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-8">
+        <h1 class="text-3xl font-bold text-center mb-2">🍽️ Calorie Estimator</h1>
+        <p class="text-center text-slate-500 mb-6">
+            Upload a food image to predict category and calories per 100g
+        </p>
+
+        <!-- Upload Area -->
+        <div id="dropzone" class="dropzone rounded-xl p-6 text-center cursor-pointer">
+            <input id="fileInput" type="file" accept="image/*" hidden />
+            <p class="text-slate-600 font-medium">Drag & drop image here</p>
+            <p class="text-sm text-slate-400 mt-1">or click to browse</p>
+        </div>
+
+        <!-- Image Preview -->
+        <div id="previewContainer" class="mt-6 hidden">
+            <img id="previewImage" class="rounded-xl max-h-64 mx-auto shadow-lg object-contain" />
+        </div>
+
+        <!-- Predict Button -->
+        <button id="predictBtn" disabled
+            class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed">
+            Predict Calories
+        </button>
+
+        <!-- Loading -->
+        <div id="loading" class="mt-4 text-center text-blue-600 hidden">
+            🔍 Analyzing image...
+        </div>
+
+        <!-- Result -->
+        <div id="result" class="mt-6 hidden bg-slate-50 rounded-xl p-4 text-center">
+            <p class="text-lg font-semibold" id="foodLabel"></p>
+            <p class="text-slate-600 mt-1">
+                Calories per 100g:
+                <span class="font-bold" id="calories"></span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("fileInput");
+        const previewContainer = document.getElementById("previewContainer");
+        const previewImage = document.getElementById("previewImage");
+        const predictBtn = document.getElementById("predictBtn");
+        const loading = document.getElementById("loading");
+        const result = document.getElementById("result");
+        const foodLabel = document.getElementById("foodLabel");
+        const calories = document.getElementById("calories");
+
+        let selectedFile = null;
+
+        dropzone.addEventListener("click", () => fileInput.click());
+
+        dropzone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropzone.classList.add("dragover");
+        });
+
+        dropzone.addEventListener("dragleave", () => {
+            dropzone.classList.remove("dragover");
+        });
+
+        dropzone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropzone.classList.remove("dragover");
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener("change", (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file || !file.type.startsWith("image/")) return;
+
+            selectedFile = file;
+            predictBtn.disabled = false;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                previewImage.src = reader.result;
+                previewContainer.classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        predictBtn.addEventListener("click", async () => {
+            if (!selectedFile) return;
+
+            result.classList.add("hidden");
+            loading.classList.remove("hidden");
+            predictBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append("file", selectedFile);
+
+            try {
+                const res = await fetch("/predict-image", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Request failed");
+
+                const data = await res.json();
+
+                // IMPORTANT: backend returns { prediction: {...} }
+                foodLabel.textContent = data.prediction.food_category;
+                calories.textContent = data.prediction.calories_per_100g;
+
+                result.classList.remove("hidden");
+            } catch (err) {
+                alert("Prediction failed");
+            } finally {
+                loading.classList.add("hidden");
+                predictBtn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

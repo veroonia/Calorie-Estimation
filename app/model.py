@@ -97,6 +97,8 @@ def predict_from_image(image_path: str):
     ].values[0]
 
     return {
-        "food_category": food_category,
-        "calories_per_100g": int(calories_per_100g)
+        "prediction": {
+            "food_category": food_category,
+            "calories_per_100g": int(calories_per_100g)
+        }
     }
