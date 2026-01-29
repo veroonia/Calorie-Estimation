@@ -10,56 +10,425 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            overflow-y: scroll;
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating background shapes */
+        .blob {
+            position: fixed;
+            opacity: 0.7;
+            filter: blur(50px);
+            animation: blobMove 8s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        .blob-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,100,150,0.5), transparent);
+            top: -50px;
+            right: -50px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(100,200,255,0.5), transparent);
+            bottom: -50px;
+            left: -50px;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(150,100,255,0.5), transparent);
+            bottom: 50px;
+            right: 10%;
+            animation-delay: 4s;
+        }
+
+        @keyframes blobMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -50px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+
+        /* Container styling */
+        .container-main {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 50px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+                        inset 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: cardFloat 6s ease-in-out infinite;
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0px) perspective(1000px) rotateX(0deg); }
+            50% { transform: translateY(-20px) perspective(1000px) rotateX(2deg); }
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: titleGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(102, 126, 234, 0.3); }
+            50% { text-shadow: 0 0 30px rgba(240, 147, 251, 0.6); }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
         .dropzone {
-            border: 2px dashed #94a3b8;
-            transition: all 0.2s ease;
+            position: relative;
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 50px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .dropzone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .dropzone:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropzone:hover::before {
+            left: 100%;
         }
 
         .dropzone.dragover {
-            border-color: #2563eb;
-            background-color: #eff6ff;
+            border-color: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(240, 147, 251, 0.5);
+        }
+
+        .dropzone p {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .dropzone p:first-of-type {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .dropzone p:last-of-type {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .preview-container {
+            margin-top: 30px;
+            animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) rotateX(90deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        .preview-image {
+            border-radius: 15px;
+            max-height: 280px;
+            margin: 0 auto;
+            object-fit: contain;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            animation: imageZoom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes imageZoom {
+            from { transform: scale(0.8) rotateY(-20deg); opacity: 0; }
+            to { transform: scale(1) rotateY(0deg); opacity: 1; }
+        }
+
+        .predict-btn {
+            margin-top: 30px;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .predict-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .predict-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        .predict-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .predict-btn:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .predict-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.2rem;
+            margin-top: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            margin-right: 8px;
+            animation: spin 0.6s infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.6); opacity: 0.5; }
+        }
+
+        .result {
+            margin-top: 30px;
+            background: linear-gradient(135deg, rgba(255, 87, 108, 0.4), rgba(240, 147, 251, 0.4));
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            animation: resultSlide 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(240, 147, 251, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes resultSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px) rotateX(-90deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        .result-item {
+            color: rgba(255, 255, 255, 0.95);
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .result-label {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff5f7e 0%, #ff1744 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 8px;
+            animation: valueGlow 2s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
+            filter: drop-shadow(0 0 10px rgba(255, 23, 68, 0.4));
+        }
+
+        @keyframes valueGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(245, 87, 108, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(240, 147, 251, 0.5)); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .glass-card {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .dropzone {
+                padding: 35px 20px;
+            }
+
+            .result-value {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center">
+<body>
+    <!-- Animated background blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
 
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-8">
-        <h1 class="text-3xl font-bold text-center mb-2">🍽️ Calorie Estimator</h1>
-        <p class="text-center text-slate-500 mb-6">
-            Upload a food image to predict category and calories per 100g
-        </p>
+    <div class="container-main">
+        <div class="glass-card">
+            <h1 class="title">🍽️ Calorie AI</h1>
+            <p class="subtitle">Intelligent Food Recognition & Nutrition Analysis</p>
 
-        <!-- Upload Area -->
-        <div id="dropzone" class="dropzone rounded-xl p-6 text-center cursor-pointer">
-            <input id="fileInput" type="file" accept="image/*" hidden />
-            <p class="text-slate-600 font-medium">Drag & drop image here</p>
-            <p class="text-sm text-slate-400 mt-1">or click to browse</p>
-        </div>
+            <!-- Upload Area -->
+            <div id="dropzone" class="dropzone">
+                <input id="fileInput" type="file" accept="image/*" />
+                <p>📸 Drop Your Food Here</p>
+                <p>or click to select</p>
+            </div>
 
-        <!-- Image Preview -->
-        <div id="previewContainer" class="mt-6 hidden">
-            <img id="previewImage" class="rounded-xl max-h-64 mx-auto shadow-lg object-contain" />
-        </div>
+            <!-- Image Preview -->
+            <div id="previewContainer" class="preview-container hidden">
+                <img id="previewImage" class="preview-image" />
+            </div>
 
-        <!-- Predict Button -->
-        <button id="predictBtn" disabled
-            class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed">
-            Predict Calories
-        </button>
+            <!-- Predict Button -->
+            <button id="predictBtn" disabled class="predict-btn">
+                <span class="spinner hidden" id="btnSpinner"></span>
+                Analyze & Calculate Calories
+            </button>
 
-        <!-- Loading -->
-        <div id="loading" class="mt-4 text-center text-blue-600 hidden">
-            🔍 Analyzing image...
-        </div>
+            <!-- Loading -->
+            <div id="loading" class="loading hidden">
+                <span class="spinner"></span>
+                Processing your image...
+            </div>
 
-        <!-- Result -->
-        <div id="result" class="mt-6 hidden bg-slate-50 rounded-xl p-4 text-center">
-            <p class="text-lg font-semibold" id="foodLabel"></p>
-            <p class="text-slate-600 mt-1">
-                Calories per 100g:
-                <span class="font-bold" id="calories"></span>
-            </p>
+            <!-- Result -->
+            <div id="result" class="result hidden">
+                <div class="result-item">
+                    <div class="result-label">Food Category</div>
+                    <div class="result-value" id="foodLabel"></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Calories per 100g</div>
+                    <div class="result-value" id="calories"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -69,6 +438,7 @@
         const previewContainer = document.getElementById("previewContainer");
         const previewImage = document.getElementById("previewImage");
         const predictBtn = document.getElementById("predictBtn");
+        const btnSpinner = document.getElementById("btnSpinner");
         const loading = document.getElementById("loading");
         const result = document.getElementById("result");
         const foodLabel = document.getElementById("foodLabel");
@@ -116,6 +486,7 @@
 
             result.classList.add("hidden");
             loading.classList.remove("hidden");
+            btnSpinner.classList.remove("hidden");
             predictBtn.disabled = true;
 
             const formData = new FormData();
@@ -131,15 +502,15 @@
 
                 const data = await res.json();
 
-                // IMPORTANT: backend returns { prediction: {...} }
                 foodLabel.textContent = data.prediction.food_category;
                 calories.textContent = data.prediction.calories_per_100g;
 
                 result.classList.remove("hidden");
             } catch (err) {
-                alert("Prediction failed");
+                alert("Prediction failed. Please try again.");
             } finally {
                 loading.classList.add("hidden");
+                btnSpinner.classList.add("hidden");
                 predictBtn.disabled = false;
             }
         });
