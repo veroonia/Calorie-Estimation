@@ -1,43 +1,83 @@
-# Food Image Calorie Estimation
+# 🍽️ Food Image Calorie Estimation (Calorie AI)
 
-A Python project that **estimates the calorie content of food from images** using image processing and machine learning. The system enhances images, extracts color and texture features, classifies food types, and provides calorie estimates based on a reference dataset.
+<p align="center">
+  <img src="assets/calorie-ai-ui.png" alt="Calorie AI Interface" width="800"/>
+</p>
 
----
-
-## Features
-
-- **Image Enhancement:** Applies CLAHE (Contrast Limited Adaptive Histogram Equalization) to improve contrast and visibility of food textures.  
-- **Image Restoration:** Uses Non-Local Means (NLM) denoising to reduce noise while preserving important details.  
-- **Feature Extraction:**  
-  - HSV and LAB color histograms capture color information.  
-  - Local Binary Patterns (LBP) capture texture details.  
-- **Machine Learning Models:** Trains and evaluates Random Forest, SVM, and Logistic Regression classifiers for food recognition.  
-- **Calorie Estimation:** Maps predicted food categories to calories per 100g from a CSV dataset and calculates estimated calories for a given portion.  
-- **Evaluation:** Provides accuracy and classification reports for each model.
+<p align="center">
+  <b>Intelligent Food Recognition & Nutrition Analysis</b>
+</p>
 
 ---
 
-## Tech Stack
+## 📌 Overview
 
-- **Python 3**  
-- **OpenCV** – Image enhancement and denoising  
-- **scikit-image** – Feature extraction (LBP, HOG)  
-- **scikit-learn** – Machine learning models and evaluation  
-- **NumPy & Pandas** – Data handling  
-- **Joblib** – Model persistence  
+**Food Image Calorie Estimation (Calorie AI)** is a Python-based machine learning project that estimates the **calorie content of food from images**.  
+The system applies image enhancement, feature extraction, and supervised learning techniques to recognize food categories and calculate estimated calories using a nutritional reference dataset.
+
+This project focuses on **classical computer vision + machine learning pipelines**, emphasizing interpretability, feature engineering, and model evaluation.
 
 ---
 
-## Dataset
+## ✨ Features
 
-- [Food-11 Dataset](https://www.kaggle.com/datasets/trolukovich/food11-image-dataset) – Contains 11 food categories including Bread, Dairy, Dessert, Meat, and more.  
-- **Calories.csv** – Custom CSV mapping each food category to its calories per 100g.  
+- **Image Enhancement**
+  - CLAHE (Contrast Limited Adaptive Histogram Equalization) to improve contrast and visibility
+- **Image Restoration**
+  - Non-Local Means (NLM) denoising to reduce noise while preserving texture
+- **Feature Extraction**
+  - HSV & LAB color histograms for color representation
+  - Local Binary Patterns (LBP) for texture analysis
+- **Machine Learning Models**
+  - Random Forest
+  - Support Vector Machine (SVM)
+  - Logistic Regression
+- **Calorie Estimation**
+  - Maps predicted food classes to calories per 100g using a CSV reference
+  - Computes estimated calorie values for a given portion
+- **Evaluation**
+  - Accuracy scores
+  - Classification reports for model comparison
 
 ---
 
-## Installation
+## 🧠 Machine Learning Pipeline
 
-1. Clone the repository:  
+1. Image preprocessing (enhancement & denoising)
+2. Feature extraction (color + texture)
+3. Feature vector construction
+4. Model training and validation
+5. Food category prediction
+6. Calorie lookup and estimation
+
+---
+
+## 🛠️ Tech Stack
+
+- **Python 3**
+- **OpenCV** – Image enhancement and denoising
+- **scikit-image** – Feature extraction (LBP, HOG)
+- **scikit-learn** – ML models and evaluation
+- **NumPy & Pandas** – Data processing
+- **Joblib** – Model saving and loading
+
+---
+
+## 📊 Dataset
+
+- **Food-11 Dataset**  
+  https://www.kaggle.com/datasets/trolukovich/food11-image-dataset  
+  Contains 11 food categories including Bread, Dairy, Dessert, Meat, Vegetables, and more.
+
+- **Calories.csv**
+  - Custom dataset mapping each food category to calories per 100g
+  - Used as a nutritional reference for estimation
+
+---
+
+## ⚙️ Installation
+
+### 1️⃣ Clone the repository
 ```bash
 git clone https://github.com/veroonia/Calorie-Estimation.git
 cd Calorie-Estimation
