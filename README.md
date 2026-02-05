@@ -19,6 +19,23 @@ This project focuses on **classical computer vision + machine learning pipelines
 
 ---
 
+## Project Structure
+
+This repository contains two parallel implementations:
+
+### 🔬 main branch
+- Original Google Colab notebook
+- Feature extraction + ML experimentation
+- Model training and evaluation
+
+### 🚀 webapp-demo branch
+- FastAPI backend
+- HTML frontend (templates + static)
+- Dockerized deployment
+- Real-time image upload and calorie estimation
+
+---
+
 ## ✨ Features
 
 - **Image Enhancement**
